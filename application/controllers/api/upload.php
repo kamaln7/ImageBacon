@@ -61,6 +61,49 @@ class Api_Upload_Controller extends Base_Controller {
 
 		return Response::json(array('status' => true, 'name' => $name, 'url' => 'https://imagebacon.com/n/'.$unique, 'image' => 'https://i.mgba.co/'.$name));
 	}
+
+	public function post_url()
+	{
+		// Validate input
+		$rules = array(
+            'url' => 'required|url'
+        );
+        $validation = Validator::make(Input::all(), $rules);
+
+        if ($validation->fails()) {
+        	throw new Exception($validation->errors->get('url'));
+        }
+
+        // Fetch remote image
+        $url     = Input::get('url');
+        $info    = getimagesize($url);
+        $image 	 = file_get_contents($url);
+        if ($info == false) {
+        	throw new Exception('Invalid image URL.');
+        }
+
+        // Get and validate the extension
+		$ext = strtolower(end(explode('.', $url)));
+		if (!in_array($ext, array('png','gif','jpeg','jpe','jpg','tiff','bmp'))) {
+			throw new Exception('Image format not recognized, contact luke@axxim.net');
+		}
+
+		$unique = $this->unique();
+		$name   = $unique.'.'.$ext;
+
+		// Create the image
+		$i = new Image();
+
+			// TODO: Add column values
+
+		$i->save();
+
+		// Upload to S3
+		
+		// Generate thumbnail
+
+		return Response::json(array('status' => true, 'name' => $name, 'url' => 'https://imagebacon.com/n/'.$unique, 'image' => 'https://i.mgba.co/'.$name));
+	}
  
 	private function gen_thumb($image, $name, $mime, $height = 180, $width = 260)
 	{
