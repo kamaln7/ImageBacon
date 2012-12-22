@@ -4,7 +4,7 @@
 
 <?php if ($errors->has()): ?>
 <div class="alert alert-error">
-    <strong>Oops!</strong> There was an problem registering you. This is what we've gathered.
+    <strong>Oops!</strong> There was an problem logging you in. This is what we've gathered.
     <ul>
         <?php foreach ($errors->all() as $error): ?>
         <li><?php echo $error; ?></li>
